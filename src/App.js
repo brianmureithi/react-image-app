@@ -5,7 +5,8 @@ import {UnsplashingImage} from './components/UnsplashingImage';
 import axios from 'axios';
 import styled from 'styled-components';
 import {createGlobalStyle} from 'styled-components'
-
+import InfiniteScroll from 'react-infinite-scroll-component';
+import AppBar from '@material-ui/core/AppBar'
 const GlobalStyle =createGlobalStyle`
 *{
   margin:0;
@@ -32,27 +33,40 @@ grid-auto-rows:300px;
 function App() {
   const [images,setImages] = useState([]);
   useEffect(()=>{
-    
+    fetchImages();
+     },[])
+
+  const fetchImages = () => {
     const apiRoot = "https://api.unsplash.com";
     const accessKey = process.env.REACT_APP_ACCESSKEY;
-    axios.get(`${apiRoot}/photos/random?client_id=${accessKey}&count=10`)
+    axios.get(`${apiRoot}/photos/random?client_id=${accessKey}&count=12`)
     .then(res => setImages([...images, ...res.data]))
-  },[])
+   
+  }
 
   return (
     <div className="App">
-     <Heading/>
+    
+     <AppBar style={{backgroundColor:'#000'}}>
+       
+     </AppBar>
 <GlobalStyle/>
-<Loader/>
+
+<InfiniteScroll
+  dataLength ={images.length}
+  next ={fetchImages}
+  hasMore={true}
+  loader={<Loader/>} >
 <WrapperImage>
     { images.map(image => (
          <UnsplashingImage url={image.urls.thumb} key={image.id}/>
      ))}
 </WrapperImage>
-    
 
-    
-    
+</InfiniteScroll>
+
+
+ 
     </div>
   );
 }
