@@ -6,7 +6,8 @@ import axios from 'axios';
 import styled from 'styled-components';
 import {createGlobalStyle} from 'styled-components'
 import InfiniteScroll from 'react-infinite-scroll-component';
-import AppBar from '@material-ui/core/AppBar'
+import {AppBar,Tabs,Tab} from '@material-ui/core'
+
 const GlobalStyle =createGlobalStyle`
 *{
   margin:0;
@@ -30,8 +31,10 @@ grid-auto-rows:300px;
 `
 
 
+
 function App() {
   const [images,setImages] = useState([]);
+  const [currentTab,setCurrentTab] = useState(0);
   useEffect(()=>{
     fetchImages();
      },[])
@@ -43,12 +46,19 @@ function App() {
     .then(res => setImages([...images, ...res.data]))
    
   }
+  const changeTab = (event, value) => {
+    setCurrentTab(value)
+  }
 
   return (
     <div className="App">
     
-     <AppBar style={{backgroundColor:'#000'}}>
-       
+     <AppBar style={{margintop:10,background:'#031f3a'}}>
+     <Tabs value={currentTab} onChange={changeTab}>
+        <Tab label="Images" id="home-tab" aria-controls="home-panel" />
+      
+      </Tabs>
+    
      </AppBar>
 <GlobalStyle/>
 
@@ -58,7 +68,7 @@ function App() {
   hasMore={true}
   loader={<Loader/>} >
 <WrapperImage>
-    { images.map(image => (
+    {images.map(image => (
          <UnsplashingImage url={image.urls.thumb} key={image.id}/>
      ))}
 </WrapperImage>
